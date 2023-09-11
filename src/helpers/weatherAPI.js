@@ -19,23 +19,21 @@ export const searchCities = async (term) => {
   }
 };
 export const getWeatherByCity = async (cityURL) => {
-  console.log(cityURL);
   const eachCity = cityURL.map(async (element) => {
-    console.log(element);
     const response = await fetch(`http://api.weatherapi.com/v1/current.json?lang=pt&key=${TOKEN}&q=${element}`);
     const data = await response.json();
-    console.log(data);
     const { current } = data;
     const { location } = data;
     return {
       name: location.name,
+      country: location.country,
       temp: current.temp_c,
       condition: current.condition.text,
       icon: current.condition.icon,
     };
   });
-
   // console.log(await Promise.all(eachCity));
+
   return eachCity;
 };
 // const test = ['rio-de-janeiro-rio-de-janeiro-brazil', 'rio-branco-acre-brazil'];

@@ -122,6 +122,12 @@ export async function handleSearch(event) {
     return window.alert('Nenhuma cidade encontrada');
   }
   const objectCities = cities.map((city) => city.url);
-  console.log(objectCities);
+  const city = await Promise.all(await getWeatherByCity(objectCities));
+  console.log(Object.values(city));
+  city.forEach((element) => {
+    const card = createCityElement(element);
+    const ulDad = document.getElementById('cities');
+    ulDad.appendChild(card);
+  });
   return getWeatherByCity(objectCities);
 }
