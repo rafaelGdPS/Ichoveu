@@ -22,6 +22,7 @@ export const getWeatherByCity = async (cityURL) => {
   const eachCity = cityURL.map(async (element) => {
     const response = await fetch(`http://api.weatherapi.com/v1/current.json?lang=pt&key=${TOKEN}&q=${element}`);
     const data = await response.json();
+    console.log(data);
     const { current } = data;
     const { location } = data;
     return {
@@ -30,6 +31,7 @@ export const getWeatherByCity = async (cityURL) => {
       temp: current.temp_c,
       condition: current.condition.text,
       icon: current.condition.icon,
+      url: element,
     };
   });
   // console.log(await Promise.all(eachCity));

@@ -1,5 +1,7 @@
 import { searchCities, getWeatherByCity } from './weatherAPI';
 
+const TOKEN = import.meta.env.VITE_TOKEN;
+
 /**
  * Cria um elemento HTML com as informações passadas
  */
@@ -101,8 +103,11 @@ export function createCityElement(cityInfo) {
   infoContainer.appendChild(tempContainer);
   infoContainer.appendChild(iconElement);
 
+  const btnForecast = createElement('button', 'city-forecast-button', 'Ver previsão');
+
   cityElement.appendChild(headingElement);
   cityElement.appendChild(infoContainer);
+  cityElement.appendChild(btnForecast);
 
   return cityElement;
 }
@@ -118,16 +123,37 @@ export async function handleSearch(event) {
   const searchInput = document.getElementById('search-input');
   const searchValue = searchInput.value;
   const cities = await searchCities(searchValue);
+
   if (!cities.length) {
     return window.alert('Nenhuma cidade encontrada');
   }
   const objectCities = cities.map((city) => city.url);
   const city = await Promise.all(await getWeatherByCity(objectCities));
   console.log(Object.values(city));
-  city.forEach((element) => {
+  city.forEach(async (element) => {
     const card = createCityElement(element);
     const ulDad = document.getElementById('cities');
     ulDad.appendChild(card);
+    const btnResponse = await fetch(`http://api.weatherapi.com/v1/forecast.json?lang=pt&key=${TOKEN}&q=${element.url}&days=7`);
+    const forecastData = btnResponse.json();
+    console.log(await forecastData);
+    const resForecast = await forecastData;
+    // const arrayforecast = Object.values(resForecast);
+    const btnForecast = document.querySelector('.city-forecast-button');
+    const { forecast } = resForecast;
+    const { forecastday } = forecast;
+    console.log(forecastday);
+    btnForecast.addEventListener('click', () => {
+      const forecastList = forecastday.map((eachObject) => ({
+        date: eachObject.date,
+        maxTemp: eachObject.day.maxtemp_c,
+        minTemp: eachObject.day.mintemp_c,
+        condition: eachObject.day.condition.text,
+        icon: eachObject.day.condition.icon,
+      }));
+      showForecast(forecastList);
+      console.log(forecastList);
+    });
   });
   return getWeatherByCity(objectCities);
 }
