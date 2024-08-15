@@ -138,11 +138,9 @@ export async function handleSearch(event) {
     const forecastData = btnResponse.json();
     console.log(await forecastData);
     const resForecast = await forecastData;
-    // const arrayforecast = Object.values(resForecast);
     const btnForecast = document.querySelector('.city-forecast-button');
     const { forecast } = resForecast;
     const { forecastday } = forecast;
-    console.log(forecastday);
     btnForecast.addEventListener('click', () => {
       const forecastList = forecastday.map((eachObject) => ({
         date: eachObject.date,
@@ -152,7 +150,6 @@ export async function handleSearch(event) {
         icon: eachObject.day.condition.icon,
       }));
       showForecast(forecastList);
-      console.log(forecastList);
     });
   });
   return getWeatherByCity(objectCities);
